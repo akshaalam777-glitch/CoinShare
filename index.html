@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CoinShare - Earn Coins by Sharing Files</title>
+  <title>CoinShare - Earn Coins & Premium Subscriptions</title>
   
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/navbar.css">
   <link rel="stylesheet" href="assets/css/components.css">
+
+  <!-- Monetag Ad Script Space (Monetag se mila hua script tag yahan daalein) -->
+  <!-- Example: <script src="//monetag-script-link.js"></script> -->
 </head>
 <body>
 
@@ -27,11 +30,18 @@
       <div class="coin-badge" onclick="CoinSystem.processWithdrawal()" style="cursor: pointer;" title="Click to Withdraw">
         <span class="coin-icon">C</span>
         <span id="userCoinCount">0</span>
-        <span id="userCurrencyValue" style="font-size: 11px; opacity: 0.8;">(₹0.00)</span>
+        <span id="userCurrencyValue" style="font-size: 11px; opacity: 0.8;">(INR 0.00)</span>
       </div>
       <button class="btn" id="userProfileBtn" onclick="AuthSystem.openLoginModal()">Login</button>
     </div>
   </header>
+
+  <!-- Top Ad Banner Space (Auto Hidden for Paid Users) -->
+  <div class="ad-banner-space container" style="text-align: center; margin-top: 10px;">
+    <div style="background: var(--card-bg); border: 1px dashed var(--border-color); padding: 15px; border-radius: 6px; font-size: 12px; color: var(--text-secondary);">
+      📢 Monetag Ad Banner Area
+    </div>
+  </div>
 
   <!-- Main Content Container -->
   <main class="container">
@@ -45,6 +55,56 @@
       <div class="ai-input-group">
         <input type="text" id="aiInputField" placeholder="Ask AI anything...">
         <button class="btn btn-primary" onclick="AIChatbot.sendMessage()">Send</button>
+      </div>
+    </section>
+
+    <!-- Subscription Plans Section -->
+    <section style="margin-bottom: 35px;">
+      <h2 class="title-medium">Choose Your Membership Plan</h2>
+      <div class="files-grid">
+        
+        <!-- Ad-Free Plan -->
+        <div class="file-card" style="border: 1px solid var(--coin-gold);">
+          <div>
+            <div class="file-title">⚡ Ad-Free Plan</div>
+            <div style="font-size: 20px; font-weight: 800; margin: 8px 0; color: var(--coin-gold);">₹49 <span style="font-size: 12px; font-weight: 400; color: var(--text-secondary);">/ month</span></div>
+            <div class="file-desc">
+              • Remove All Ads<br>
+              • 500 MB Cloud Storage<br>
+              • Standard Download Speed
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="SubscriptionSystem.initiatePaytmPayment('no_ads')">Buy ₹49 Plan</button>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="file-card">
+          <div>
+            <div class="file-title">🚀 Pro Plan</div>
+            <div style="font-size: 20px; font-weight: 800; margin: 8px 0;">₹99 <span style="font-size: 12px; font-weight: 400; color: var(--text-secondary);">/ month</span></div>
+            <div class="file-desc">
+              • Remove All Ads<br>
+              • 2 GB Cloud Storage<br>
+              • Fast Download Speed
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="SubscriptionSystem.initiatePaytmPayment('pro')">Buy ₹99 Plan</button>
+        </div>
+
+        <!-- Ultimate Plan -->
+        <div class="file-card">
+          <div>
+            <div class="file-title">🔥 Ultimate Plan</div>
+            <div style="font-size: 20px; font-weight: 800; margin: 8px 0;">₹199 <span style="font-size: 12px; font-weight: 400; color: var(--text-secondary);">/ month</span></div>
+            <div class="file-desc">
+              • Remove All Ads<br>
+              • 4 GB Cloud Storage<br>
+              • Unlimited VIP Speed
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="SubscriptionSystem.initiatePaytmPayment('ultimate')">Buy ₹199 Plan</button>
+        </div>
+
       </div>
     </section>
 
@@ -121,7 +181,8 @@
   <script src="assets/js/menu.js"></script>
   <script src="assets/js/auth.js"></script>
   <script src="assets/js/ai-bot.js"></script>
+  <script src="assets/js/subscription.js"></script>
 
 </body>
-  </html>
-  
+            </html>
+            
