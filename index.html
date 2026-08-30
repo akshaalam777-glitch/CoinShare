@@ -1,195 +1,197 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CoinShare - Digital Platform & Project Hosting</title>
-  
-  <!-- CSS Stylesheets -->
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="stylesheet" href="assets/css/navbar.css">
-  <link rel="stylesheet" href="assets/css/components.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoinShare - Live Mahila Chat</title>
+    
+    <!-- Adsterra Popunder Ad Code -->
+    <script src="https://pl31093023.profitableratecpmnetwork.com/88/9e/76/889e76661e2ed3d7a72957aa5c956b52.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .status-bar {
+            background: #25d366;
+            color: white;
+            padding: 10px 15px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 15px;
+        }
+
+        .profile-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            background: #fafafa;
+            transition: transform 0.2s;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            margin: 0 auto 8px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            border: 3px solid #ff4757;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .profile-age {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .btn-connect {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Main Navigation Header -->
-  <header>
-    <div class="nav-left">
-      <button class="menu-toggle-btn" onclick="MenuController.toggleSidebar()" aria-label="Toggle Navigation Drawer">☰</button>
-      <a href="#" class="brand-logo">CoinShare</a>
+    <div class="header">
+        <h1>CoinShare Live Chat</h1>
+        <p>Connect with active members nearby</p>
     </div>
 
-    <div class="header-search">
-      <input type="text" id="globalSearchInput" placeholder="Search files, source codes, applications...">
-    </div>
-
-    <div class="nav-right">
-      <div class="coin-badge" onclick="CoinSystem.processWithdrawal()" style="cursor: pointer;" title="Click to open payout console">
-        <span class="coin-icon">C</span>
-        <span id="userCoinCount">0</span>
-        <span id="userCurrencyValue" style="font-size: 11px; opacity: 0.8;">(INR 0.00)</span>
-      </div>
-      <button class="btn" id="userProfileBtn" onclick="AuthSystem.openLoginModal()">Login</button>
-    </div>
-  </header>
-
-  <!-- Content Container -->
-  <main class="container">
-    
-    <!-- AI Assistant Interactive Console -->
-    <section class="ai-box">
-      <div class="ai-header">CoinShare AI Support Assistant</div>
-      <div class="chat-history" id="aiChatHistory">
-        <div class="chat-msg bot">Welcome to CoinShare. Ask me questions about downloadable files, platform rules, or account setups.</div>
-      </div>
-      <div class="ai-input-group">
-        <input type="text" id="aiInputField" placeholder="Type your query here...">
-        <button class="btn btn-primary" onclick="AIChatbot.sendMessage()">Send</button>
-      </div>
-    </section>
-
-    <!-- Subscription Plans & Funding Section -->
-    <section style="margin-bottom: 35px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px;">
-        <div>
-          <h2 class="title-medium" style="margin: 0;">Membership Subscription Plans</h2>
-          <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Choose a suitable tier to unlock ad-free browsing and higher storage capacity.</p>
+    <div class="chat-container">
+        <div class="status-bar">
+            <span class="online-dot"></span> 142 Members Online Right Now
         </div>
-        <button class="btn" style="border: 1px solid var(--coin-gold); color: var(--coin-gold); font-weight: bold; padding: 10px 16px;" onclick="SubscriptionSystem.openDonationModal()">
-          Donate for Next Project
-        </button>
-      </div>
 
-      <div class="files-grid">
-        
-        <!-- Ad-Free Tier Card -->
-        <div class="file-card" style="border: 1px solid var(--coin-gold);">
-          <div>
-            <div class="file-title">Ad-Free Plan</div>
-            <div style="font-size: 22px; font-weight: 800; margin: 10px 0; color: var(--coin-gold);">INR 49.00 <span style="font-size: 12px; font-weight: 400; color: var(--text-secondary);">/ month</span></div>
-            <div class="file-desc">
-              - Removes all advertisements platform-wide<br>
-              - Standard 500 MB personal storage allocation<br>
-              - Standard download speeds enabled<br>
-              - Direct community support access
+        <div class="profiles-grid">
+            <div class="profile-card">
+                <div class="avatar">👩‍💼</div>
+                <div class="profile-name">Priya S.</div>
+                <div class="profile-age">24 yrs • Delhi</div>
+                <button class="btn-connect" onclick="triggerAd()">Start Chat</button>
             </div>
-          </div>
-          <button class="btn btn-primary btn-full" onclick="SubscriptionSystem.initiatePaytmPayment('no_ads')">Purchase Ad-Free Plan</button>
-        </div>
 
-        <!-- Pro Tier Card -->
-        <div class="file-card">
-          <div>
-            <div class="file-title">Pro Developer Plan</div>
-            <div style="font-size: 22px; font-weight: 800; margin: 10px 0;">INR 99.00 <span style="font-size: 12px; font-weight: 400; color: var(--text-secondary);">/ month</span></div>
-            <div class="file-desc">
-              - Removes all advertisements platform-wide<br>
-              - Upgraded 2 GB personal storage allocation<br>
-              - High-speed file download links<br>
-              - Early access to new file releases
+            <div class="profile-card">
+                <div class="avatar">👩‍🔬</div>
+                <div class="profile-name">Ananya M.</div>
+                <div class="profile-age">22 yrs • Mumbai</div>
+                <button class="btn-connect" onclick="triggerAd()">Start Chat</button>
             </div>
-          </div>
-          <button class="btn btn-primary btn-full" onclick="SubscriptionSystem.initiatePaytmPayment('pro')">Purchase Pro Plan</button>
-        </div>
 
-        <!-- Ultimate Tier Card -->
-        <div class="file-card">
-          <div>
-            <div class="file-title">Ultimate VIP Plan</div>
-            <div style="font-size: 22px; font-weight: 800; margin: 10px 0;">INR 199.00 <span style="font-size: 12px; font-weight: 400; color: var(--text-secondary);">/ month</span></div>
-            <div class="file-desc">
-              - Removes all advertisements platform-wide<br>
-              - Maximum 4 GB personal storage allocation<br>
-              - Unlimited VIP download bandwidth<br>
-              - Priority technical support response
+            <div class="profile-card">
+                <div class="avatar">👩‍🎨</div>
+                <div class="profile-name">Riya Sharma</div>
+                <div class="profile-age">25 yrs • Bangalore</div>
+                <button class="btn-connect" onclick="triggerAd()">Start Chat</button>
             </div>
-          </div>
-          <button class="btn btn-primary btn-full" onclick="SubscriptionSystem.initiatePaytmPayment('ultimate')">Purchase Ultimate Plan</button>
+
+            <div class="profile-card">
+                <div class="avatar">👩‍💻</div>
+                <div class="profile-name">Neha Gupta</div>
+                <div class="profile-age">23 yrs • Pune</div>
+                <button class="btn-connect" onclick="triggerAd()">Start Chat</button>
+            </div>
         </div>
-
-      </div>
-    </section>
-
-    <!-- File Sharing Header Section -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-      <h2 class="title-medium">Popular File Uploads</h2>
-      <button class="btn" onclick="CoinSystem.creditCoinsForDownload()">Simulate Download (+1 Coin)</button>
     </div>
 
-    <!-- Uploaded Items Feed Grid -->
-    <div class="files-grid">
-      <div class="file-card">
-        <div>
-          <div class="creator-info">
-            <div class="creator-dp">A</div>
-            <div class="creator-name">Alex Developer</div>
-          </div>
-          <div class="file-title">Premium Web Dashboard Source Files</div>
-          <div class="file-desc">Complete HTML5, CSS3, and JavaScript admin panel template featuring native dark theme support.</div>
-        </div>
-        <button class="btn btn-primary btn-full" onclick="CoinSystem.creditCoinsForDownload()">Download Package</button>
-      </div>
-
-      <div class="file-card">
-        <div>
-          <div class="creator-info">
-            <div class="creator-dp">R</div>
-            <div class="creator-name">Rohan Scripts</div>
-          </div>
-          <div class="file-title">Automation Script Collection Pack</div>
-          <div class="file-desc">Comprehensive bundle containing 10+ utility scripts for web scraping, automation, and API routines.</div>
-        </div>
-        <button class="btn btn-primary btn-full" onclick="CoinSystem.creditCoinsForDownload()">Download Package</button>
-      </div>
+    <div class="footer-note">
+        © 2026 CoinShare. All rights reserved.
     </div>
 
-  </main>
-
-  <!-- Global Overlay Panel -->
-  <div class="overlay" id="appOverlay" onclick="MenuController.closeSidebar(); AuthSystem.closeLoginModal();"></div>
-
-  <!-- Slide-out Navigation Drawer -->
-  <aside class="sidebar" id="appSidebar">
-    <h3 class="title-medium">Navigation Menu</h3>
-    <a class="menu-item" href="#">Home Page</a>
-    <a class="menu-item" onclick="CoinSystem.processWithdrawal()">Withdraw Coin Earnings</a>
-    <a class="menu-item" onclick="SubscriptionSystem.openDonationModal()" style="color: var(--coin-gold); font-weight: bold;">Donate for Next Project</a>
-    <a class="menu-item" onclick="Config.promptForApiKey()">AI API Settings</a>
-    <a class="menu-item" onclick="ThemeController.toggleTheme()">Toggle Theme Mode</a>
-  </aside>
-
-  <!-- User Profile & Authentication Modal -->
-  <div class="modal" id="loginModal">
-    <h3 class="title-medium">User Login Verification</h3>
-    <div class="form-group">
-      <label>Username</label>
-      <input type="text" id="loginUsername" placeholder="Enter user handle">
-    </div>
-    <div class="form-group">
-      <label>Email Address</label>
-      <input type="email" id="loginEmail" placeholder="Enter registered email address">
-    </div>
-    <button class="btn btn-primary btn-full" onclick="
-      const usernameInput = document.getElementById('loginUsername').value;
-      const emailInput = document.getElementById('loginEmail').value;
-      if(usernameInput && emailInput) { 
-        AuthSystem.saveUser(usernameInput, emailInput); 
-        AuthSystem.closeLoginModal(); 
-      } else { 
-        alert('Validation Notice: Please provide both username and email address to proceed.'); 
-      }
-    ">Save Account Profile</button>
-  </div>
-
-  <!-- Application Engine Scripts Initialization -->
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/theme.js"></script>
-  <script src="assets/js/coins.js"></script>
-  <script src="assets/js/menu.js"></script>
-  <script src="assets/js/auth.js"></script>
-  <script src="assets/js/ai-bot.js"></script>
-  <script src="assets/js/subscription.js"></script>
-
+    <script>
+        function triggerAd() {
+            alert("Connecting to live chat room... Please wait.");
+        }
+    </script>
 </body>
-  </html>
-    
+</html>
