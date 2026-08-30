@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoinShare Cloud - Professional File Storage</title>
 
+    <!-- Adsterra Popunder Ad Code -->
     <script src="https://pl31093023.profitableratecpmnetwork.com/88/9e/76/889e76661e2ed3d7a72957aa5c956b52.js"></script>
 
+    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -101,7 +103,7 @@
             display: none !important;
         }
 
-        input[type="email"], input[type="password"], input[type="file"] {
+        input[type="file"] {
             width: 100%;
             padding: 12px;
             background: var(--bg-color);
@@ -110,10 +112,6 @@
             color: var(--text-primary);
             font-size: 14px;
             outline: none;
-        }
-
-        input:focus {
-            border-color: var(--text-primary);
         }
 
         .btn {
@@ -125,6 +123,11 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
         }
 
         .btn:hover {
@@ -226,18 +229,28 @@
             <div class="header">
                 <h1>CoinShare Cloud</h1>
             </div>
+            <!-- B&W Theme Toggle Button -->
             <button class="theme-toggle-btn" onclick="toggleTheme()">Toggle B&W Mode</button>
         </div>
 
+        <!-- SOCIAL AUTH SECTION -->
         <div id="auth-box" class="auth-box">
-            <p style="font-size: 13px; color: var(--text-secondary);">Sign in or create account to manage files.</p>
-            <input type="email" id="email" placeholder="Email address" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button class="btn" onclick="signUp()">Create Account</button>
-            <button class="btn btn-outline" onclick="signIn()">Log In</button>
-            <p id="auth-status" class="status-msg"></p>
+            <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 8px;">Sign in or create account to manage files.</p>
+            
+            <button class="btn btn-outline" onclick="socialLogin('google')">
+                <span>🌐</span> Continue with Google
+            </button>
+            <button class="btn btn-outline" onclick="socialLogin('github')">
+                <span>🐙</span> Continue with GitHub
+            </button>
+            <button class="btn btn-outline" onclick="socialLogin('facebook')">
+                <span>📘</span> Continue with Facebook
+            </button>
+            
+            <p id="auth-status" class="status-msg" style="margin-top: 10px;"></p>
         </div>
 
+        <!-- DASHBOARD -->
         <div id="dashboard-box" class="dashboard-box hidden">
             <p style="font-size: 12px; color: var(--text-secondary);">User: <strong id="user-email" style="color: var(--text-primary);"></strong></p>
             
@@ -259,6 +272,7 @@
         </div>
     </div>
 
+    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <a href="#" class="nav-item">🏠</a>
         <a href="#" class="nav-item">➕</a>
@@ -301,35 +315,24 @@
         function showDashboard(user) {
             document.getElementById('auth-box').classList.add('hidden');
             document.getElementById('dashboard-box').classList.remove('hidden');
-            document.getElementById('user-email').innerText = user.email;
+            document.getElementById('user-email').innerText = user.email || user.user_metadata.full_name || "User";
             listFiles();
         }
 
-        async function signUp() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        // Social Login Handler via Supabase OAuth
+        async function socialLogin(provider) {
             const status = document.getElementById('auth-status');
+            status.innerText = `Connecting to ${provider}...`;
+            
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: provider,
+                options: {
+                    redirectTo: window.location.href
+                }
+            });
 
-            status.innerText = "Creating account...";
-            const { data, error } = await supabase.auth.signUp({ email, password });
             if (error) {
-                status.innerText = error.message;
-            } else {
-                status.innerText = "Success! You can now log in.";
-            }
-        }
-
-        async function signIn() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const status = document.getElementById('auth-status');
-
-            status.innerText = "Logging in...";
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-                status.innerText = error.message;
-            } else {
-                showDashboard(data.user);
+                status.innerText = "Error: " + error.message;
             }
         }
 
@@ -394,5 +397,5 @@
         checkSession();
     </script>
 </body>
-</html>
-l
+            </html>
+            
