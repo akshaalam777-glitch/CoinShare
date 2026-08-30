@@ -70,3 +70,4 @@ const SubscriptionSystem = {
 document.addEventListener('DOMContentLoaded', () => {
   SubscriptionSystem.applyAdPreferences();
 });
+        
