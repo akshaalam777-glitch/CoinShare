@@ -5,16 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoinShare - Decentralized File Sharing</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Adsterra Popunder Ad Script Integration -->
     <script type="text/javascript" src="//www.highperformanceformat.com/e5/72/7a/e5727a3c31b3e83b400938b2d1847683.js"></script>
-    <!-- Supabase CDN Integration for Database & Auth -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Ensures hidden elements are strictly not displayed to fix overlapping */
+        .hidden {
+            display: none !important;
+        }
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            background-color: var(--bg-secondary);
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+        }
+        .sidebar.active {
+            width: 250px;
+        }
+        .sidebar .sidebar-menu-item {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: block;
+            cursor: pointer;
+        }
+        .sidebar .sidebar-menu-item:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+    </style>
 </head>
 <body>
 
-    <!-- SIDEBAR MENU -->
     <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
+        <div class="sidebar-header" style="padding: 0 15px; display: flex; justify-content: space-between; align-items: center;">
             <h3>Menu</h3>
             <button class="icon-btn" onclick="toggleSidebar()">Close</button>
         </div>
@@ -25,49 +54,44 @@
         <div class="sidebar-menu-item" onclick="showSection('follows-section')">Follows & Following</div>
         <div class="sidebar-menu-item" onclick="showSection('donation-section')">Donation</div>
         <div class="sidebar-menu-item" onclick="showSection('withdraw-section')">Withdraw Coins</div>
-        <!-- Coupon Code Option Placed at the very bottom below all settings -->
         <div class="sidebar-menu-item" onclick="showSection('coupon-section')" style="color: #0070f3; font-weight: 700;">🎁 Apply Coupon Code</div>
         <div class="sidebar-menu-item" onclick="logoutUser()" style="color: var(--danger-color);">Logout</div>
     </div>
 
-    <!-- MAIN CONTAINER -->
     <div class="container">
-        <div class="top-bar">
+        <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <div class="header">
                 <h1><span class="logo-coin">Coin</span><span class="logo-share">Share</span></h1>
             </div>
-            <div style="display: flex; gap: 8px;">
-                <button class="icon-btn" id="menu-btn" onclick="toggleSidebar()" style="display: none;">☰ Menu</button>
-                <button class="theme-toggle-btn" onclick="toggleTheme()">☀️ / 🌙</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="icon-btn" id="menu-btn" onclick="toggleSidebar()" style="display: none; padding: 5px 10px;">☰ Menu</button>
+                <button class="theme-toggle-btn" onclick="toggleTheme()" style="padding: 5px 10px;">☀️ / 🌙</button>
             </div>
         </div>
 
-        <!-- 1. LOGIN SECTION -->
         <div id="login-section" class="auth-box">
             <p class="status-msg">Welcome back! Please login to your account.</p>
             <input type="text" id="login-user" placeholder="Enter username*">
             <input type="password" id="login-pass" placeholder="Enter password*">
             <button class="btn" onclick="handleLogin()">Login</button>
-            <hr>
+            <hr style="margin: 15px 0;">
             <p class="status-msg">Don't have an account?</p>
             <button class="btn btn-outline" onclick="switchAuthMode('signup')">Create Account (Sign Up)</button>
         </div>
 
-        <!-- 2. SIGNUP SECTION -->
         <div id="signup-section" class="auth-box hidden">
             <p class="status-msg">Create Account - Min 6 chars username, Pass (6-8 chars with symbols, no dash `-`)</p>
-            <input type="file" id="signup-dp" class="btn-outline" style="padding: 6px;">
+            <input type="file" id="signup-dp" class="btn-outline" style="padding: 6px; width: 100%; margin-bottom: 10px;">
             <input type="text" id="signup-user" placeholder="Enter username* (Min 6, numbers & alphabets)">
             <input type="password" id="signup-pass" placeholder="Enter password* (6-8 chars, symbols, use _ instead of -)">
             
-            <select id="signup-role" onchange="handleRoleChange()">
+            <select id="signup-role" onchange="handleRoleChange()" style="width: 100%; margin-bottom: 10px; padding: 8px;">
                 <option value="">Select your role*</option>
                 <option value="Downloader">Downloader</option>
                 <option value="Uploader">Uploader</option>
             </select>
 
-            <!-- Conditional Category Dropdown for Uploader -->
-            <select id="signup-category" class="hidden">
+            <select id="signup-category" class="hidden" style="width: 100%; margin-bottom: 10px; padding: 8px;">
                 <option value="">Select Uploader Category*</option>
                 <option value="APK uploader">APK uploader</option>
                 <option value="Sound recording uploader">Sound recording uploader</option>
@@ -77,24 +101,23 @@
                 <option value="Other">Other</option>
             </select>
 
-            <textarea id="signup-bio" placeholder="Enter your Bio (optional)"></textarea>
+            <textarea id="signup-bio" placeholder="Enter your Bio (optional)" style="width: 100%; margin-bottom: 10px; padding: 8px;"></textarea>
             <button class="btn" onclick="handleSignup()">Create Account</button>
-            <hr>
+            <hr style="margin: 15px 0;">
             <button class="btn btn-outline" onclick="switchAuthMode('login')">Already have an account? Login</button>
         </div>
 
-        <!-- 3. HOME / DASHBOARD SECTION -->
         <div id="home-section" class="dashboard-box hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span id="welcome-user-msg" style="font-weight: 600; font-size: 14px;">Welcome to CoinShare</span>
                 <span id="coin-balance" class="icon-btn">🪙 0 Coins</span>
             </div>
 
-            <input type="text" id="search-bar" placeholder="Search files...">
-            <button class="btn btn-outline" onclick="triggerAskAI()">+ ASK Questions (Gemini API)</button>
+            <input type="text" id="search-bar" placeholder="Search files..." style="width: 100%; margin-bottom: 8px;">
+            <button class="btn btn-outline" onclick="openAiChatPage()" style="width: 100%; margin-bottom: 10px;">+ ASK Questions (AI Assistant)</button>
 
-            <hr>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <hr style="margin: 10px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span style="font-size: 13px; font-weight: 600;">Some Files:</span>
                 <select id="file-filter" style="width: auto; padding: 6px;" onchange="filterFiles()">
                     <option value="all">All Files</option>
@@ -106,9 +129,9 @@
             </div>
 
             <div id="files-container">
-                <div class="file-card" onclick="openFileDetail('Sample Note PDF', 'john_doe', 'This is a test file description for learning notes.', 'safe')">
+                <div class="file-card" onclick="openFileDetail('Sample Note PDF', 'john_doe', 'This is a test file description for learning notes.', 'safe')" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer;">
                     <div>
-                        <div class="file-name">Sample_Notes.pdf</div>
+                        <div class="file-name" style="font-weight: 600;">Sample_Notes.pdf</div>
                         <div style="font-size: 11px; color: var(--text-secondary);">By: john_doe</div>
                     </div>
                     <span style="font-size: 12px; color: var(--safe-color);">Safe</span>
@@ -116,10 +139,9 @@
             </div>
         </div>
 
-        <!-- 4. FILE DETAIL VIEW SECTION -->
         <div id="file-detail-section" class="dashboard-box hidden">
-            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="backToHome()">← Back</button>
-            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px; margin-bottom: 10px;" onclick="backToHome()">← Back</button>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
                 <div id="detail-uploader-dp" style="width: 36px; height: 36px; background: #333; border-radius: 50%;"></div>
                 <div>
                     <div id="detail-uploader-name" style="font-weight: 600; font-size: 13px;">Uploader</div>
@@ -127,57 +149,53 @@
                 </div>
             </div>
             <div id="detail-file-title" style="font-weight: 700; margin-top: 10px; font-size: 14px;">File Name</div>
-            <div id="detail-file-desc" style="font-size: 12px; color: var(--text-secondary);">Description goes here...</div>
+            <div id="detail-file-desc" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px;">Description goes here...</div>
             
-            <button class="btn" id="download-action-btn" onclick="handleDownloadClick()">Downloader (Checking Safety...)</button>
+            <button class="btn" id="download-action-btn" onclick="handleDownloadClick()" style="margin-bottom: 8px;">Downloader (Checking Safety...)</button>
             <button class="btn btn-outline" onclick="openChatWithUploader()">Chat with Uploader</button>
         </div>
 
-        <!-- 5. SUBSCRIPTION PLANS SECTION -->
         <div id="subscription-section" class="sub-box hidden">
-            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="backToHome()">← Back</button>
-            <h3 style="font-size: 16px; margin-top: 5px;">Subscription Plans</h3>
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px; margin-bottom: 10px;" onclick="backToHome()">← Back</button>
+            <h3 style="font-size: 16px; margin-bottom: 10px;">Subscription Plans</h3>
             
-            <div class="plan-card">
-                <div class="plan-title">Free Plan</div>
-                <div class="plan-desc">Provides 500 MB Storage. Basic access.</div>
+            <div class="plan-card" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 8px;">
+                <div class="plan-title" style="font-weight: 600;">Free Plan</div>
+                <div class="plan-desc" style="font-size: 12px; color: var(--text-secondary);">Provides 500 MB Storage. Basic access.</div>
             </div>
-            <div class="plan-card">
-                <div class="plan-title">Ads Removal</div>
-                <div class="plan-desc">Removes all disruptive advertisements.</div>
+            <div class="plan-card" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 8px;">
+                <div class="plan-title" style="font-weight: 600;">Ads Removal</div>
+                <div class="plan-desc" style="font-size: 12px; color: var(--text-secondary);">Removes all disruptive advertisements.</div>
             </div>
-            <div class="plan-card">
-                <div class="plan-title">Storage Upgrade</div>
-                <div class="plan-desc">Upgrade cloud storage up to 2GB.</div>
+            <div class="plan-card" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 8px;">
+                <div class="plan-title" style="font-weight: 600;">Storage Upgrade</div>
+                <div class="plan-desc" style="font-size: 12px; color: var(--text-secondary);">Upgrade cloud storage up to 2GB.</div>
             </div>
-            <div class="plan-card" id="exclusive-plan-card" style="border-color: #0070f3;">
-                <div class="plan-title" style="color: #0070f3;">Exclusive Plan (Free via Coupon)</div>
-                <div class="plan-desc">Remove all ads and upgrade storage up to 4GB. Unlocked via promo code!</div>
+            <div class="plan-card" id="exclusive-plan-card" style="padding: 10px; border: 1px solid #0070f3; border-radius: 6px;">
+                <div class="plan-title" style="color: #0070f3; font-weight: 600;">Exclusive Plan (Free via Coupon)</div>
+                <div class="plan-desc" style="font-size: 12px; color: var(--text-secondary);">Remove all ads and upgrade storage up to 4GB. Unlocked via promo code!</div>
             </div>
         </div>
 
-        <!-- 6. COUPON SECTION -->
         <div id="coupon-section" class="dashboard-box hidden">
-            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="backToHome()">← Back</button>
-            <h3 style="font-size: 15px; margin-top: 10px;">Apply Promotional Coupon</h3>
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px; margin-bottom: 10px;" onclick="backToHome()">← Back</button>
+            <h3 style="font-size: 15px; margin-top: 5px;">Apply Promotional Coupon</h3>
             <p class="status-msg" style="margin-top: 5px;">Enter your promotion code to unlock exclusive features.</p>
             
-            <input type="text" id="sidebar-coupon-input" placeholder="Enter Coupon Code" style="margin-top: 10px;">
-            <button class="btn" onclick="applySpecialCoupon()" style="margin-top: 10px;">Redeem Coupon</button>
+            <input type="text" id="sidebar-coupon-input" placeholder="Enter Coupon Code" style="width: 100%; margin: 10px 0;">
+            <button class="btn" onclick="applySpecialCoupon()">Redeem Coupon</button>
             <div id="coupon-success-msg" style="font-size: 13px; color: var(--safe-color); margin-top: 10px; font-weight: 600;"></div>
         </div>
 
-        <!-- GENERIC SECTION -->
         <div id="generic-section" class="dashboard-box hidden">
-            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="backToHome()">← Back</button>
-            <h3 id="section-title-text" style="font-size: 15px; margin-top: 10px;">Section</h3>
-            <p class="status-msg" style="margin-top: 15px;">Content for this section will appear here based on your selection.</p>
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px; margin-bottom: 10px;" onclick="backToHome()">← Back</button>
+            <h3 id="section-title-text" style="font-size: 15px; margin-top: 5px;">Section</h3>
+            <p class="status-msg" style="margin-top: 10px;">Content for this section will appear here based on your selection.</p>
         </div>
 
     </div>
 
     <script>
-        // Global State Management using Boolean (True/False) Flags
         let userState = {
             isAuthenticated: false,
             username: "",
@@ -186,18 +204,12 @@
             isAdsRemoved: false
         };
 
-        // Theme Toggle Logic
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute("data-theme");
-            if (currentTheme === "dark") {
-                html.setAttribute("data-theme", "light");
-            } else {
-                html.setAttribute("data-theme", "dark");
-            }
+            html.setAttribute("data-theme", currentTheme === "dark" ? "light" : "dark");
         }
 
-        // Switch between Login and Signup
         function switchAuthMode(mode) {
             if (mode === 'signup') {
                 document.getElementById('login-section').classList.add('hidden');
@@ -208,7 +220,6 @@
             }
         }
 
-        // Role change handler (Conditional Category dropdown display)
         function handleRoleChange() {
             const role = document.getElementById('signup-role').value;
             const catDropdown = document.getElementById('signup-category');
@@ -219,26 +230,25 @@
             }
         }
 
-        // Handle Signup validation rules
         function handleSignup() {
-            const user = document.getElementById('signup-user').value;
-            const pass = document.getElementById('signup-pass').value;
+            const user = document.getElementById('signup-user').value.trim();
+            const pass = document.getElementById('signup-pass').value.trim();
             const role = document.getElementById('signup-role').value;
 
             if (user.length < 6) {
-                console.error("Validation failed: Username too short");
+                alert("Username must be at least 6 characters long!");
                 return;
             }
             if (pass.length < 6 || pass.length > 8) {
-                console.error("Validation failed: Password length invalid");
+                alert("Password must be between 6 and 8 characters!");
                 return;
             }
             if (pass.includes('-')) {
-                console.error("Validation failed: Password contains dash");
+                alert("Do not use dash (-) in password, use underscore (_) instead!");
                 return;
             }
             if (!role) {
-                console.error("Validation failed: Role not selected");
+                alert("Please select your role!");
                 return;
             }
 
@@ -250,9 +260,9 @@
         }
 
         function handleLogin() {
-            const user = document.getElementById('login-user').value;
+            const user = document.getElementById('login-user').value.trim();
             if (!user) {
-                console.error("Login failed: Username empty");
+                alert("Please enter your username!");
                 return;
             }
 
@@ -273,8 +283,6 @@
             userState.isAuthenticated = false;
             userState.username = "";
             userState.role = "";
-            userState.isExclusiveActive = false;
-            userState.isAdsRemoved = false;
 
             toggleSidebar();
             document.getElementById('home-section').classList.add('hidden');
@@ -286,7 +294,6 @@
             document.getElementById('menu-btn').style.display = 'none';
         }
 
-        // Sidebar Navigation
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
         }
@@ -317,32 +324,25 @@
             document.getElementById('home-section').classList.remove('hidden');
         }
 
-        // Apply Special & Lifetime Coupon Code Logic using True/False checks
         function applySpecialCoupon() {
             const codeInput = document.getElementById('sidebar-coupon-input').value.trim();
             const msgBox = document.getElementById('coupon-success-msg');
 
-            let isValidCode = false;
-
             if (codeInput === "MyCatCute") {
                 userState.isExclusiveActive = true;
                 userState.isAdsRemoved = true;
-                isValidCode = true;
                 msgBox.style.color = "var(--safe-color)";
-                msgBox.innerText = "Master Code Verified. Lifetime Exclusive Plan and Zero Ads Unlocked.";
+                msgBox.innerText = "Master Code Verified! Lifetime Exclusive Plan and Zero Ads Unlocked.";
             } else if (codeInput === "TECHYUG2026") {
                 userState.isAdsRemoved = true;
-                isValidCode = true;
                 msgBox.style.color = "var(--safe-color)";
                 msgBox.innerText = "Promotional coupon applied. Ads Removal active.";
             } else {
-                isValidCode = false;
                 msgBox.style.color = "var(--danger-color)";
                 msgBox.innerText = "Invalid coupon code.";
             }
         }
 
-        // File Click & Safety Status Check
         function openFileDetail(title, uploader, desc, safetyStatus) {
             document.getElementById('home-section').classList.add('hidden');
             document.getElementById('file-detail-section').classList.remove('hidden');
@@ -353,34 +353,18 @@
 
             const dlBtn = document.getElementById('download-action-btn');
             if (safetyStatus === 'safe') {
-                dlBtn.className = "btn btn-download-safe";
+                dlBtn.className = "btn";
+                dlBtn.style.backgroundColor = "var(--safe-color)";
                 dlBtn.innerText = "Download (Safe)";
             } else {
-                dlBtn.className = "btn btn-download-unsafe";
+                dlBtn.className = "btn";
+                dlBtn.style.backgroundColor = "var(--danger-color)";
                 dlBtn.innerText = "Download (Unsafe / Risk)";
             }
         }
 
+        function openAiChatPage() {
+            window.location.href = "ai-chat.html";
+        }
+
         function handleDownloadClick() {
-            console.log("Download initiated via network.");
-        }
-
-        function triggerAskAI() {
-            console.log("Gemini AI Assistant triggered.");
-        }
-
-        function filterFiles() {
-            // Filter logic
-        }
-
-        function toggleFollow() {
-            console.log("Follow status toggled.");
-        }
-
-        function openChatWithUploader() {
-            console.log("Opening chat interface.");
-        }
-    </script>
-</body>
-                </html>
-                
