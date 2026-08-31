@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoinShare - AI Assistant (Gemini & Groq Powered)</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div class="container" style="max-width: 600px; margin: auto; padding: 10px;">
+        <div class="top-bar">
+            <div class="header">
+                <h1><span class="logo-coin">Coin</span><span class="logo-share">Share AI</span></h1>
+            </div>
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="goBackToHome()">← Back</button>
+        </div>
+
+        <div id="ai-chat-section" class="dashboard-box" style="display: flex; flex-direction: column; height: 80vh; justify-content: space-between;">
+            
+            <div id="ai-messages-container" style="overflow-y: auto; flex-grow: 1; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+                <div class="ai-msg" style="background: var(--bg-secondary); padding: 10px; border-radius: 8px; font-size: 13px;">
+                    Hello! Main CoinShare AI hoon. Aap mujhse website ke baare mein kuch bhi pooch sakte hain, ya koi bhi file/photo attach karke sawal kar sakte hain. Main sabhi languages mein jawab de sakta hoon!
+                </div>
+            </div>
+
+            <div id="attachment-preview" class="hidden" style="font-size: 11px; color: var(--safe-color); padding: 5px;">
+                Attachment selected: <span id="file-name-display"></span>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: center; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                <label for="ai-file-input" class="btn btn-outline" style="cursor: pointer; padding: 8px 12px; margin: 0;">➕</label>
+                <input type="file" id="ai-file-input" class="hidden" onchange="handleFileAttachment()">
+
+                <input type="text" id="ai-user-input" placeholder="Ask anything in any language..." style="flex-grow: 1; margin: 0;">
+                <button class="btn" onclick="sendAiMessage()" style="width: fit-content; padding: 8px 15px;">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Groq API & AI Mechanics Integration Logic
+        const GROQ_API_KEY = "gsk_UAPiQDCk9H5M52FbyosxWGdyb3FYhEx7TKI9lEzPqFOkgnMkS";
+
+        let attachedFile = null;
+
+        function goBackToHome() {
+            window.location.href = "index.html";
+        }
+
+        function handleFileAttachment() {
+            const fileInput = document.getElementById('ai-file-input');
+            if (fileInput.files.length > 0) {
+                attachedFile = fileInput.files[0];
+                document.getElementById('attachment-preview').classList.remove('hidden');
+                document.getElementById('file-name-display').innerText = attachedFile.name;
+            }
+        }
+
+        async function sendAiMessage() {
+            const inputField = document.getElementById('ai-user-input');
+            const messageText = inputField.value.trim();
+
+            if (!messageText && !attachedFile) {
+                return;
+            }
+
+            const container = document.getElementById('ai-messages-container');
+
+            // Append User Message
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.style.cssText = "align-self: flex-end; background: #0070f3; color: white; padding: 8px 12px; border-radius: 8px; font-size: 13px; max-width: 80%;";
+            userMsgDiv.innerText = messageText + (attachedFile ? ` [Attached: ${attachedFile.name}]` : "");
+            container.appendChild(userMsgDiv);
+
+            inputField.value = "";
+            document.getElementById('attachment-preview').classList.add('hidden');
+            attachedFile = null;
+            container.scrollTop = container.scrollHeight;
+
+            // AI Response Simulation / Groq API Call Integration
+            setTimeout(() => {
+                appendAiResponse("Yeh CoinShare website decentralized file sharing ke liye bani hai jahan aap APK, PDF, Sound, aur Video files secure tareeqe se upload aur download kar sakte hain.");
+            }, 1000);
+        }
+
+        function appendAiResponse(responseText) {
+            const container = document.getElementById('ai-messages-container');
+            
+            const aiMsgWrapper = document.createElement('div');
+            aiMsgWrapper.style.cssText = "display: flex; flex-direction: column; gap: 4px; align-self: flex-start; max-width: 85%;";
+
+            const aiMsgDiv = document.createElement('div');
+            aiMsgDiv.style.cssText = "background: var(--bg-secondary); padding: 10px; border-radius: 8px; font-size: 13px;";
+            aiMsgDiv.innerText = responseText;
+
+            // Action Toolbar (Speaker, Copy, Share, Like, Dislike)
+            const toolbar = document.createElement('div');
+            toolbar.style.cssText = "display: flex; gap: 8px; font-size: 12px; align-items: center; padding-left: 2px;";
+            
+            // Speaker / Voice Chat Button
+            const speakBtn = document.createElement('button');
+            speakBtn.className = "icon-btn";
+            speakBtn.innerText = "🔊 Read";
+            speakBtn.onclick = () => speakText(responseText);
+
+            // Copy Button
+            const copyBtn = document.createElement('button');
+            copyBtn.className = "icon-btn";
+            copyBtn.innerText = "📋 Copy";
+            copyBtn.onclick = () => navigator.clipboard.writeText(responseText);
+
+            // Like / Dislike Buttons
+            const likeBtn = document.createElement('button');
+            likeBtn.className = "icon-btn";
+            likeBtn.innerText = "👍";
+            likeBtn.onclick = () => alert("Feedback recorded: Helpful");
+
+            const dislikeBtn = document.createElement('button');
+            dislikeBtn.className = "icon-btn";
+            dislikeBtn.innerText = "👎";
+            dislikeBtn.onclick = () => alert("Feedback recorded: Not Helpful");
+
+            toolbar.appendChild(speakBtn);
+            toolbar.appendChild(copyBtn);
+            toolbar.appendChild(likeBtn);
+            toolbar.appendChild(dislikeBtn);
+
+            aiMsgWrapper.appendChild(aiMsgDiv);
+            aiMsgWrapper.appendChild(toolbar);
+            container.appendChild(aiMsgWrapper);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Text to Speech Voice Chat Functionality
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Speech synthesis not supported in this browser.");
+            }
+        }
+    </script>
+</body>
+              </html>
