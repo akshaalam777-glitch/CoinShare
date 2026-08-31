@@ -1,0 +1,17 @@
+{
+  "master_lifetime_codes": [
+    {
+      "code": "MyCatCute",
+      "owner": "Creator/Admin",
+      "expires": "Never",
+      "privilege": "Ultimate Exclusive Plan (All Ads Removed, Max Storage & Future Features Free)"
+    }
+  ],
+  "promotional_youtuber_codes": [
+    {
+      "code": "TECHYUG2026",
+      "expires": "2026-12-31",
+      "privilege": "Ads Removal + Storage Upgrade"
+    }
+  ]
+}
