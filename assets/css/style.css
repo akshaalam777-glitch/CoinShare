@@ -7,6 +7,8 @@
     --btn-bg: #ffffff;
     --btn-text: #000000;
     --btn-hover: #e0e0e0;
+    --danger-color: #ff4d4f;
+    --safe-color: #0070f3;
 }
 
 :root[data-theme="light"] {
@@ -18,6 +20,8 @@
     --btn-bg: #000000;
     --btn-text: #ffffff;
     --btn-hover: #333333;
+    --danger-color: #ff4d4f;
+    --safe-color: #0070f3;
 }
 
 * {
@@ -47,6 +51,7 @@ body {
     border-radius: 16px;
     padding: 24px;
     margin: auto;
+    position: relative;
 }
 
 .top-bar {
@@ -56,7 +61,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* Custom CoinShare Logo Styling */
+/* Custom CoinShare Logo Styling (Page 1 & other pages) */
 .header h1 {
     font-size: 22px;
     font-weight: 800;
@@ -75,7 +80,17 @@ body {
     border-radius: 0 4px 4px 0;
 }
 
-.theme-toggle-btn {
+/* Light mode specific logo adjustment if needed */
+:root[data-theme="light"] .logo-coin {
+    background-color: #000000;
+    color: #ffffff;
+}
+:root[data-theme="light"] .logo-share {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.theme-toggle-btn, .icon-btn {
     background: transparent;
     color: var(--text-primary);
     border: 1px solid var(--border-color);
@@ -86,7 +101,7 @@ body {
     cursor: pointer;
 }
 
-.auth-box, .dashboard-box {
+.auth-box, .dashboard-box, .signup-box, .sub-box {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -96,7 +111,7 @@ body {
     display: none !important;
 }
 
-input[type="email"], input[type="password"], input[type="file"] {
+input[type="text"], input[type="email"], input[type="password"], select, textarea {
     width: 100%;
     padding: 12px;
     background: var(--bg-color);
@@ -105,6 +120,11 @@ input[type="email"], input[type="password"], input[type="file"] {
     color: var(--text-primary);
     font-size: 14px;
     outline: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
 .btn {
@@ -133,11 +153,15 @@ input[type="email"], input[type="password"], input[type="file"] {
     border: 1px solid var(--border-color);
 }
 
-.btn-logout {
-    background: transparent;
-    color: #ff4d4f;
-    border: 1px solid #ff4d4f;
-    margin-top: 10px;
+/* Download Button Safe/Unsafe Dynamic States */
+.btn-download-safe {
+    background: var(--safe-color) !important;
+    color: #ffffff !important;
+}
+
+.btn-download-unsafe {
+    background: var(--danger-color) !important;
+    color: #ffffff !important;
 }
 
 .file-card {
@@ -149,6 +173,7 @@ input[type="email"], input[type="password"], input[type="file"] {
     align-items: center;
     margin-top: 8px;
     border: 1px solid var(--border-color);
+    cursor: pointer;
 }
 
 .file-name {
@@ -157,23 +182,6 @@ input[type="email"], input[type="password"], input[type="file"] {
     word-break: break-all;
     max-width: 220px;
     color: var(--text-primary);
-}
-
-.file-actions {
-    display: flex;
-    gap: 6px;
-}
-
-.action-btn {
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    padding: 6px 10px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 11px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
 }
 
 .status-msg {
@@ -188,23 +196,62 @@ hr {
     margin: 14px 0;
 }
 
-nav.bottom-nav {
-    width: 100%;
-    max-width: 480px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 12px 0;
-    border-top: 1px solid var(--border-color);
+/* Sidebar / Menu Styling (Page 5 design) */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
     background: var(--card-bg);
-    border-radius: 12px;
-    margin-top: 15px;
-    border: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    transition: left 0.3s ease;
 }
 
-.nav-item {
-    font-size: 18px;
-    cursor: pointer;
-    text-decoration: none;
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-menu-item {
+    padding: 12px 10px;
     color: var(--text-primary);
-  }
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.sidebar-menu-item:hover {
+    background: var(--bg-color);
+}
+
+/* Subscription Plans Card Styling (Page 6) */
+.plan-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+.plan-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+.plan-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    }
+    
