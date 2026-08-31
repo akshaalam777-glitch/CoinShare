@@ -3,203 +3,384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoinShare - Professional File Storage</title>
-
-    <script src="https://pl31093023.profitableratecpmnetwork.com/88/9e/76/889e76661e2ed3d7a72957aa5c956b52.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    <title>CoinShare - Decentralized File Sharing</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Adsterra Popunder Ad Script Integration -->
+    <script type="text/javascript" src="//www.highperformanceformat.com/e5/72/7a/e5727a3c31b3e83b400938b2d1847683.js"></script>
+    <!-- Supabase CDN Integration for Database & Auth -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
+    <!-- SIDEBAR MENU -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="icon-btn" onclick="toggleSidebar()">Close</button>
+        </div>
+        <div class="sidebar-menu-item" onclick="showSection('profile-section')">Profile & Settings</div>
+        <div class="sidebar-menu-item" onclick="showSection('storage-section')">Cloud Storage</div>
+        <div class="sidebar-menu-item" onclick="showSection('chats-section')">Chats & Messages</div>
+        <div class="sidebar-menu-item" onclick="showSection('subscription-section')">Subscription Plans</div>
+        <div class="sidebar-menu-item" onclick="showSection('follows-section')">Follows & Following</div>
+        <div class="sidebar-menu-item" onclick="showSection('donation-section')">Donation</div>
+        <div class="sidebar-menu-item" onclick="showSection('withdraw-section')">Withdraw Coins</div>
+        <!-- Coupon Code Option Placed at the very bottom below all settings -->
+        <div class="sidebar-menu-item" onclick="showSection('coupon-section')" style="color: #0070f3; font-weight: 700;">🎁 Apply Coupon Code</div>
+        <div class="sidebar-menu-item" onclick="logoutUser()" style="color: var(--danger-color);">Logout</div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
     <div class="container">
         <div class="top-bar">
             <div class="header">
                 <h1><span class="logo-coin">Coin</span><span class="logo-share">Share</span></h1>
             </div>
-            <button class="theme-toggle-btn" onclick="toggleTheme()">Toggle Mode</button>
+            <div style="display: flex; gap: 8px;">
+                <button class="icon-btn" id="menu-btn" onclick="toggleSidebar()" style="display: none;">☰ Menu</button>
+                <button class="theme-toggle-btn" onclick="toggleTheme()">☀️ / 🌙</button>
+            </div>
         </div>
 
-        <div id="auth-box" class="auth-box">
-            <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 4px;">Enter your email & password</p>
-            
-            <input type="email" id="auth-email" placeholder="Email address">
-            <input type="password" id="auth-password" placeholder="Password">
-            
-            <button class="btn" onclick="handleSignIn()">Sign In</button>
-            <button class="btn btn-outline" onclick="handleSignUp()">Create Account (Sign Up)</button>
-            
-            <p id="auth-status" class="status-msg" style="margin-top: 5px;"></p>
+        <!-- 1. LOGIN SECTION -->
+        <div id="login-section" class="auth-box">
+            <p class="status-msg">Welcome back! Please login to your account.</p>
+            <input type="text" id="login-user" placeholder="Enter username*">
+            <input type="password" id="login-pass" placeholder="Enter password*">
+            <button class="btn" onclick="handleLogin()">Login</button>
+            <hr>
+            <p class="status-msg">Don't have an account?</p>
+            <button class="btn btn-outline" onclick="switchAuthMode('signup')">Create Account (Sign Up)</button>
         </div>
 
-        <div id="dashboard-box" class="dashboard-box hidden">
-            <p style="font-size: 12px; color: var(--text-secondary);">User: <strong id="user-email" style="color: var(--text-primary);"></strong></p>
+        <!-- 2. SIGNUP SECTION -->
+        <div id="signup-section" class="auth-box hidden">
+            <p class="status-msg">Create Account - Min 6 chars username, Pass (6-8 chars with symbols, no dash `-`)</p>
+            <input type="file" id="signup-dp" class="btn-outline" style="padding: 6px;">
+            <input type="text" id="signup-user" placeholder="Enter username* (Min 6, numbers & alphabets)">
+            <input type="password" id="signup-pass" placeholder="Enter password* (6-8 chars, symbols, use _ instead of -)">
             
+            <select id="signup-role" onchange="handleRoleChange()">
+                <option value="">Select your role*</option>
+                <option value="Downloader">Downloader</option>
+                <option value="Uploader">Uploader</option>
+            </select>
+
+            <!-- Conditional Category Dropdown for Uploader -->
+            <select id="signup-category" class="hidden">
+                <option value="">Select Uploader Category*</option>
+                <option value="APK uploader">APK uploader</option>
+                <option value="Sound recording uploader">Sound recording uploader</option>
+                <option value="Video file uploader">Video file uploader</option>
+                <option value="PDF uploader">PDF uploader</option>
+                <option value="All files uploader">All files uploader</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <textarea id="signup-bio" placeholder="Enter your Bio (optional)"></textarea>
+            <button class="btn" onclick="handleSignup()">Create Account</button>
             <hr>
+            <button class="btn btn-outline" onclick="switchAuthMode('login')">Already have an account? Login</button>
+        </div>
 
-            <p style="font-size: 13px; font-weight: 600;">Upload File</p>
-            <input type="file" id="file-input">
-            <button class="btn" onclick="uploadFile()">Upload to Cloud</button>
-            <p id="upload-status" class="status-msg"></p>
-
-            <hr>
-
-            <p style="font-size: 13px; font-weight: 600;">Your Files</p>
-            <div id="file-list">
-                <p style="font-size: 12px; color: var(--text-secondary);">Loading files...</p>
+        <!-- 3. HOME / DASHBOARD SECTION -->
+        <div id="home-section" class="dashboard-box hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span id="welcome-user-msg" style="font-weight: 600; font-size: 14px;">Welcome to CoinShare</span>
+                <span id="coin-balance" class="icon-btn">🪙 0 Coins</span>
             </div>
 
-            <button class="btn btn-logout" onclick="signOut()">Log Out</button>
+            <input type="text" id="search-bar" placeholder="Search files...">
+            <button class="btn btn-outline" onclick="triggerAskAI()">+ ASK Questions (Gemini API)</button>
+
+            <hr>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 13px; font-weight: 600;">Some Files:</span>
+                <select id="file-filter" style="width: auto; padding: 6px;" onchange="filterFiles()">
+                    <option value="all">All Files</option>
+                    <option value="APK">APK Files</option>
+                    <option value="PDF">PDF Files</option>
+                    <option value="Sound">Sound Files</option>
+                    <option value="Video">Video Files</option>
+                </select>
+            </div>
+
+            <div id="files-container">
+                <div class="file-card" onclick="openFileDetail('Sample Note PDF', 'john_doe', 'This is a test file description for learning notes.', 'safe')">
+                    <div>
+                        <div class="file-name">Sample_Notes.pdf</div>
+                        <div style="font-size: 11px; color: var(--text-secondary);">By: john_doe</div>
+                    </div>
+                    <span style="font-size: 12px; color: var(--safe-color);">Safe</span>
+                </div>
+            </div>
         </div>
+
+        <!-- 4. FILE DETAIL VIEW SECTION -->
+        <div id="file-detail-section" class="dashboard-box hidden">
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="backToHome()">← Back</button>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                <div id="detail-uploader-dp" style="width: 36px; height: 36px; background: #333; border-radius: 50%;"></div>
+                <div>
+                    <div id="detail-uploader-name" style="font-weight: 600; font-size: 13px;">Uploader</div>
+                    <button class="btn-outline" style="font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 2px;" onclick="toggleFollow()">Follow</button>
+                </div>
+            </div>
+            <div id="detail-file-title" style="font-weight: 700; margin-top: 10px; font-size: 14px;">File Name</div>
+            <div id="detail-file-desc" style="font-size: 12px; color: var(--text-secondary);">Description goes here...</div>
+            
+            <button class="btn" id="download-action-btn" onclick="handleDownloadClick()">Downloader (Checking Safety...)</button>
+            <button class="btn btn-outline" onclick="openChatWithUploader()">Chat with Uploader</button>
+        </div>
+
+        <!-- 5. SUBSCRIPTION PLANS SECTION -->
+        <div id="subscription-section" class="sub-box hidden">
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="backToHome()">← Back</button>
+            <h3 style="font-size: 16px; margin-top: 5px;">Subscription Plans</h3>
+            
+            <div class="plan-card">
+                <div class="plan-title">Free Plan</div>
+                <div class="plan-desc">Provides 500 MB Storage. Basic access.</div>
+            </div>
+            <div class="plan-card">
+                <div class="plan-title">Ads Removal</div>
+                <div class="plan-desc">Removes all disruptive advertisements.</div>
+            </div>
+            <div class="plan-card">
+                <div class="plan-title">Storage Upgrade</div>
+                <div class="plan-desc">Upgrade cloud storage up to 2GB.</div>
+            </div>
+            <div class="plan-card" id="exclusive-plan-card" style="border-color: #0070f3;">
+                <div class="plan-title" style="color: #0070f3;">Exclusive Plan (Free via Coupon)</div>
+                <div class="plan-desc">Remove all ads and upgrade storage up to 4GB. Unlocked via promo code!</div>
+            </div>
+        </div>
+
+        <!-- 6. COUPON SECTION -->
+        <div id="coupon-section" class="dashboard-box hidden">
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="backToHome()">← Back</button>
+            <h3 style="font-size: 15px; margin-top: 10px;">Apply Promotional Coupon</h3>
+            <p class="status-msg" style="margin-top: 5px;">Enter your promotion code to unlock exclusive features.</p>
+            
+            <input type="text" id="sidebar-coupon-input" placeholder="Enter Coupon Code" style="margin-top: 10px;">
+            <button class="btn" onclick="applySpecialCoupon()" style="margin-top: 10px;">Redeem Coupon</button>
+            <div id="coupon-success-msg" style="font-size: 13px; color: var(--safe-color); margin-top: 10px; font-weight: 600;"></div>
+        </div>
+
+        <!-- GENERIC SECTION -->
+        <div id="generic-section" class="dashboard-box hidden">
+            <button class="btn btn-outline" style="width: fit-content; padding: 4px 10px;" onclick="backToHome()">← Back</button>
+            <h3 id="section-title-text" style="font-size: 15px; margin-top: 10px;">Section</h3>
+            <p class="status-msg" style="margin-top: 15px;">Content for this section will appear here based on your selection.</p>
+        </div>
+
     </div>
 
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item">🏠</a>
-        <a href="#" class="nav-item">➕</a>
-        <a href="#" class="nav-item">5</a>
-        <a href="#" class="nav-item">☰</a>
-    </nav>
-
     <script>
-        // Supabase Credentials
-        const SUPABASE_URL = "https://vwkdluymwcxujgvfiklc.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3a2RsdXltd2N4dWpndmZpa2xjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMDU1NTIsImV4cCI6MjEwMzU4MTU1Mn0.NuiH2apGr7sNVJR0JjR2eZAN0gGtUfPeHdTOicOdkJ8";
+        // Global State Management using Boolean (True/False) Flags
+        let userState = {
+            isAuthenticated: false,
+            username: "",
+            role: "",
+            isExclusiveActive: false,
+            isAdsRemoved: false
+        };
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        // Theme Toggle Logic
         function toggleTheme() {
-            const htmlTag = document.documentElement;
-            const currentTheme = htmlTag.getAttribute('data-theme');
-            if (currentTheme === 'dark') {
-                htmlTag.setAttribute('data-theme', 'light');
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute("data-theme");
+            if (currentTheme === "dark") {
+                html.setAttribute("data-theme", "light");
             } else {
-                htmlTag.setAttribute('data-theme', 'dark');
+                html.setAttribute("data-theme", "dark");
             }
         }
 
-        async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                showDashboard(session.user);
+        // Switch between Login and Signup
+        function switchAuthMode(mode) {
+            if (mode === 'signup') {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('signup-section').classList.remove('hidden');
             } else {
-                showAuth();
+                document.getElementById('signup-section').classList.add('hidden');
+                document.getElementById('login-section').classList.remove('hidden');
             }
         }
 
-        function showAuth() {
-            document.getElementById('auth-box').classList.remove('hidden');
-            document.getElementById('dashboard-box').classList.add('hidden');
+        // Role change handler (Conditional Category dropdown display)
+        function handleRoleChange() {
+            const role = document.getElementById('signup-role').value;
+            const catDropdown = document.getElementById('signup-category');
+            if (role === 'Uploader') {
+                catDropdown.classList.remove('hidden');
+            } else {
+                catDropdown.classList.add('hidden');
+            }
         }
 
-        function showDashboard(user) {
-            document.getElementById('auth-box').classList.add('hidden');
-            document.getElementById('dashboard-box').classList.remove('hidden');
-            document.getElementById('user-email').innerText = user.email;
-            listFiles();
-        }
+        // Handle Signup validation rules
+        function handleSignup() {
+            const user = document.getElementById('signup-user').value;
+            const pass = document.getElementById('signup-pass').value;
+            const role = document.getElementById('signup-role').value;
 
-        // Email Sign Up
-        async function handleSignUp() {
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-            const status = document.getElementById('auth-status');
-
-            if (!email || !password) {
-                status.innerText = "Please enter email and password.";
+            if (user.length < 6) {
+                console.error("Validation failed: Username too short");
+                return;
+            }
+            if (pass.length < 6 || pass.length > 8) {
+                console.error("Validation failed: Password length invalid");
+                return;
+            }
+            if (pass.includes('-')) {
+                console.error("Validation failed: Password contains dash");
+                return;
+            }
+            if (!role) {
+                console.error("Validation failed: Role not selected");
                 return;
             }
 
-            status.innerText = "Creating account...";
-            const { data, error } = await supabase.auth.signUp({ email, password });
-
-            if (error) {
-                status.innerText = "Error: " + error.message;
-            } else {
-                status.innerText = "Account created successfully! You can now sign in.";
-            }
+            userState.isAuthenticated = true;
+            userState.username = user;
+            userState.role = role;
+            
+            enterDashboard(user);
         }
 
-        // Email Sign In
-        async function handleSignIn() {
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-            const status = document.getElementById('auth-status');
-
-            if (!email || !password) {
-                status.innerText = "Please enter email and password.";
+        function handleLogin() {
+            const user = document.getElementById('login-user').value;
+            if (!user) {
+                console.error("Login failed: Username empty");
                 return;
             }
 
-            status.innerText = "Signing in...";
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            userState.isAuthenticated = true;
+            userState.username = user;
+            enterDashboard(user);
+        }
 
-            if (error) {
-                status.innerText = "Error: " + error.message;
+        function enterDashboard(username) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('signup-section').classList.add('hidden');
+            document.getElementById('home-section').classList.remove('hidden');
+            document.getElementById('menu-btn').style.display = 'block';
+            document.getElementById('welcome-user-msg').innerText = "Welcome, " + username;
+        }
+
+        function logoutUser() {
+            userState.isAuthenticated = false;
+            userState.username = "";
+            userState.role = "";
+            userState.isExclusiveActive = false;
+            userState.isAdsRemoved = false;
+
+            toggleSidebar();
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('file-detail-section').classList.add('hidden');
+            document.getElementById('subscription-section').classList.add('hidden');
+            document.getElementById('coupon-section').classList.add('hidden');
+            document.getElementById('generic-section').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('menu-btn').style.display = 'none';
+        }
+
+        // Sidebar Navigation
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function showSection(sectionId) {
+            toggleSidebar();
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('file-detail-section').classList.add('hidden');
+            document.getElementById('subscription-section').classList.add('hidden');
+            document.getElementById('coupon-section').classList.add('hidden');
+            document.getElementById('generic-section').classList.add('hidden');
+            
+            if (sectionId === 'subscription-section') {
+                document.getElementById('subscription-section').classList.remove('hidden');
+            } else if (sectionId === 'coupon-section') {
+                document.getElementById('coupon-section').classList.remove('hidden');
             } else {
-                checkSession();
+                document.getElementById('generic-section').classList.remove('hidden');
+                document.getElementById('section-title-text').innerText = sectionId.replace('-section', '').toUpperCase();
             }
         }
 
-        async function signOut() {
-            await supabase.auth.signOut();
-            showAuth();
+        function backToHome() {
+            document.getElementById('file-detail-section').classList.add('hidden');
+            document.getElementById('subscription-section').classList.add('hidden');
+            document.getElementById('coupon-section').classList.add('hidden');
+            document.getElementById('generic-section').classList.add('hidden');
+            document.getElementById('home-section').classList.remove('hidden');
         }
 
-        async function uploadFile() {
-            const fileInput = document.getElementById('file-input');
-            const status = document.getElementById('upload-status');
-            if (!fileInput.files.length) {
-                alert("Please select a file.");
-                return;
-            }
+        // Apply Special & Lifetime Coupon Code Logic using True/False checks
+        function applySpecialCoupon() {
+            const codeInput = document.getElementById('sidebar-coupon-input').value.trim();
+            const msgBox = document.getElementById('coupon-success-msg');
 
-            const file = fileInput.files[0];
-            const filePath = `public/${Date.now()}_${file.name}`;
+            let isValidCode = false;
 
-            status.innerText = "Uploading...";
-            const { data, error } = await supabase.storage.from('files').upload(filePath, file);
-
-            if (error) {
-                status.innerText = "Error: " + error.message;
+            if (codeInput === "MyCatCute") {
+                userState.isExclusiveActive = true;
+                userState.isAdsRemoved = true;
+                isValidCode = true;
+                msgBox.style.color = "var(--safe-color)";
+                msgBox.innerText = "Master Code Verified. Lifetime Exclusive Plan and Zero Ads Unlocked.";
+            } else if (codeInput === "TECHYUG2026") {
+                userState.isAdsRemoved = true;
+                isValidCode = true;
+                msgBox.style.color = "var(--safe-color)";
+                msgBox.innerText = "Promotional coupon applied. Ads Removal active.";
             } else {
-                status.innerText = "File uploaded successfully.";
-                fileInput.value = "";
-                listFiles();
+                isValidCode = false;
+                msgBox.style.color = "var(--danger-color)";
+                msgBox.innerText = "Invalid coupon code.";
             }
         }
 
-        async function listFiles() {
-            const fileListDiv = document.getElementById('file-list');
-            const { data, error } = await supabase.storage.from('files').list('public', {
-                limit: 20,
-                offset: 0
-            });
+        // File Click & Safety Status Check
+        function openFileDetail(title, uploader, desc, safetyStatus) {
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('file-detail-section').classList.remove('hidden');
+            
+            document.getElementById('detail-file-title').innerText = title;
+            document.getElementById('detail-uploader-name').innerText = uploader;
+            document.getElementById('detail-file-desc').innerText = desc;
 
-            if (error || !data || data.length === 0) {
-                fileListDiv.innerHTML = "<p style='font-size:12px; color:var(--text-secondary);'>No files found.</p>";
-                return;
+            const dlBtn = document.getElementById('download-action-btn');
+            if (safetyStatus === 'safe') {
+                dlBtn.className = "btn btn-download-safe";
+                dlBtn.innerText = "Download (Safe)";
+            } else {
+                dlBtn.className = "btn btn-download-unsafe";
+                dlBtn.innerText = "Download (Unsafe / Risk)";
             }
-
-            fileListDiv.innerHTML = "";
-            data.forEach(item => {
-                const { data: publicUrlData } = supabase.storage.from('files').getPublicUrl(`public/${item.name}`);
-                const cleanName = item.name.split('_').slice(1).join('_');
-                
-                const fileCard = document.createElement('div');
-                fileCard.className = 'file-card';
-                fileCard.innerHTML = `
-                    <span class="file-name">${cleanName}</span>
-                    <div class="file-actions">
-                        <button class="action-btn" onclick="navigator.clipboard.writeText('${publicUrlData.publicUrl}'); alert('Link Copied!');">Copy</button>
-                        <a href="${publicUrlData.publicUrl}" target="_blank" class="action-btn">Download</a>
-                    </div>
-                `;
-                fileListDiv.appendChild(fileCard);
-            });
         }
 
-        checkSession();
+        function handleDownloadClick() {
+            console.log("Download initiated via network.");
+        }
+
+        function triggerAskAI() {
+            console.log("Gemini AI Assistant triggered.");
+        }
+
+        function filterFiles() {
+            // Filter logic
+        }
+
+        function toggleFollow() {
+            console.log("Follow status toggled.");
+        }
+
+        function openChatWithUploader() {
+            console.log("Opening chat interface.");
+        }
     </script>
 </body>
-</html>
+                </html>
+                
